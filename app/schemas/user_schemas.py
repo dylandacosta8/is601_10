@@ -33,6 +33,15 @@ class UserBase(BaseModel):
     github_profile_url: Optional[str] = Field(None, example="https://github.com/johndoe")
 
     _validate_urls = validator('profile_picture_url', 'linkedin_profile_url', 'github_profile_url', pre=True, allow_reuse=True)(validate_url)
+    
+    @validator('nickname')
+    def validate_nickname(cls, value):
+        if value is not None:
+            if value.strip() != value:
+                raise ValueError("Nickname should not have leading or trailing spaces")
+            if value.lower() in ["admin", "root", "superuser"]:
+                raise ValueError("This nickname is not allowed")
+        return value
     class Config:
         from_attributes = True
 
