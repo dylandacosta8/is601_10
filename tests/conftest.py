@@ -266,3 +266,8 @@ def login_request_data():
 def user_token(user):
     token_data = {"sub": str(user.id), "role": user.role.name}
     return create_access_token(data=token_data, expires_delta=timedelta(minutes=30))
+
+@pytest.fixture(scope="function")
+def admin_token(admin_user):
+    token_data = {"sub": str(admin_user.id), "role": admin_user.role.name}
+    return create_access_token(data=token_data, expires_delta=timedelta(minutes=30))
