@@ -20,6 +20,7 @@ from unittest.mock import patch
 from uuid import uuid4
 
 # Third-party imports
+import uuid
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
@@ -249,7 +250,7 @@ def user_update_data():
 @pytest.fixture
 def user_response_data():
     return {
-        "id": "unique-id-string",
+        "id": uuid.uuid4(),
         "username": "testuser",
         "email": "test@example.com",
         "last_login_at": datetime.now(),
@@ -260,7 +261,7 @@ def user_response_data():
 
 @pytest.fixture
 def login_request_data():
-    return {"username": "john_doe_123", "password": "SecurePassword123!"}
+    return {"email": "john.doe@example.com", "password": "SecurePassword123!"}
 
 @pytest.fixture(scope="function")
 def user_token(user):
