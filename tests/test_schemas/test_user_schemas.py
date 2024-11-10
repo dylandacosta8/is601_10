@@ -47,6 +47,13 @@ def test_user_base_nickname_invalid(nickname, user_base_data):
     with pytest.raises(ValidationError):
         UserBase(**user_base_data)
 
+@pytest.mark.parametrize("nickname", ["admin", "root", "superuser"])
+def test_user_create_invalid_nickname(nickname, user_base_data):
+    user_base_data["nickname"] = nickname
+    with pytest.raises(ValidationError) as exc_info:
+        UserCreate(**user_base_data)
+    assert "This nickname is not allowed" in str(exc_info.value)
+
 # Parametrized tests for URL validation
 @pytest.mark.parametrize("url", ["http://valid.com/profile.jpg", "https://valid.com/profile.png", None])
 def test_user_base_url_valid(url, user_base_data):
