@@ -17,7 +17,7 @@ def get_email_service() -> EmailService:
     template_manager = TemplateManager()
     return EmailService(template_manager=template_manager)
 
-async def get_db() -> AsyncSession:
+async def get_db() -> AsyncSession: #TODO
     """Dependency that provides a database session for each request."""
     async_session_factory = Database.get_session_factory()
     async with async_session_factory() as session:
@@ -37,11 +37,11 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     )
     payload = decode_token(token)
     if payload is None:
-        raise credentials_exception
+        raise credentials_exception #TODO
     user_id: str = payload.get("sub")
     user_role: str = payload.get("role")
     if user_id is None or user_role is None:
-        raise credentials_exception
+        raise credentials_exception #TODO
     return {"user_id": user_id, "role": user_role}
 
 def require_role(role: str):
