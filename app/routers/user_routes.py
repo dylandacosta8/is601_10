@@ -51,7 +51,7 @@ async def get_user(user_id: UUID, request: Request, db: AsyncSession = Depends(g
         token: The OAuth2 access token obtained through OAuth2PasswordBearer dependency.
     """
     user = await UserService.get_by_id(db, user_id)
-    if not user:
+    if not user: #TODO
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     return UserResponse.model_construct(
@@ -69,7 +69,7 @@ async def get_user(user_id: UUID, request: Request, db: AsyncSession = Depends(g
         created_at=user.created_at,
         updated_at=user.updated_at,
         links=create_user_links(user.id, request)  
-    )
+    ) #TODO
 
 # Additional endpoints for update, delete, create, and list users follow a similar pattern, using
 # asynchronous database operations, handling security with OAuth2PasswordBearer, and enhancing response
@@ -88,7 +88,7 @@ async def update_user(user_id: UUID, user_update: UserUpdate, request: Request, 
     """
     user_data = user_update.model_dump(exclude_unset=True)
     updated_user = await UserService.update(db, user_id, user_data)
-    if not updated_user:
+    if not updated_user: #TODO
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     return UserResponse.model_construct(
@@ -105,7 +105,7 @@ async def update_user(user_id: UUID, user_update: UserUpdate, request: Request, 
         created_at=updated_user.created_at,
         updated_at=updated_user.updated_at,
         links=create_user_links(updated_user.id, request)
-    )
+    ) #TODO
 
 
 @router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT, name="delete_user", tags=["User Management Requires (Admin or Manager Roles)"])
@@ -116,9 +116,9 @@ async def delete_user(user_id: UUID, db: AsyncSession = Depends(get_db), token: 
     - **user_id**: UUID of the user to delete.
     """
     success = await UserService.delete(db, user_id)
-    if not success:
+    if not success: #TODO
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT) #TODO
 
 
 
@@ -139,16 +139,16 @@ async def create_user(user: UserCreate, request: Request, db: AsyncSession = Dep
     Returns:
     - UserResponse: The newly created user's information along with navigation links.
     """
-    existing_user = await UserService.get_by_email(db, user.email)
-    if existing_user:
+    existing_user = await UserService.get_by_email(db, user.email) #TODO
+    if existing_user: #TODO
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists")
     
-    existing_user = await UserService.get_by_nickname(db, user.nickname)
-    if existing_user:
+    existing_user = await UserService.get_by_nickname(db, user.nickname) #TODO
+    if existing_user: #TODO
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Nickname already exists")
 
-    created_user = await UserService.create(db, user.model_dump(), email_service)
-    if not created_user:
+    created_user = await UserService.create(db, user.model_dump(), email_service) #TODO
+    if not created_user: #TODO
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to create user")
     
     
@@ -164,7 +164,7 @@ async def create_user(user: UserCreate, request: Request, db: AsyncSession = Dep
         created_at=created_user.created_at,
         updated_at=created_user.updated_at,
         links=create_user_links(created_user.id, request)
-    )
+    ) #TODO
 
 
 @router.get("/users/", response_model=UserListResponse, tags=["User Management Requires (Admin or Manager Roles)"])
@@ -175,14 +175,14 @@ async def list_users(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_role(["ADMIN", "MANAGER"]))
 ):
-    total_users = await UserService.count(db)
-    users = await UserService.list_users(db, skip, limit)
+    total_users = await UserService.count(db) #TODO
+    users = await UserService.list_users(db, skip, limit) #TODO
 
     user_responses = [
         UserResponse.model_validate(user) for user in users
-    ]
+    ] #TODO
     
-    pagination_links = generate_pagination_links(request, skip, limit, total_users)
+    pagination_links = generate_pagination_links(request, skip, limit, total_users) #TODO
     
     # Construct the final response with pagination details
     return UserListResponse(
@@ -194,14 +194,14 @@ async def list_users(
     )
 
 
-@router.post("/register/", response_model=UserResponse, tags=["Login and Registration"])
+@router.post("/register/", response_model=UserResponse, tags=["Login and Registration"]) #TODO
 async def register(user_data: UserCreate, session: AsyncSession = Depends(get_db), email_service: EmailService = Depends(get_email_service)):
     user = await UserService.register_user(session, user_data.model_dump(), email_service)
     if user:
         return user
     raise HTTPException(status_code=400, detail="Email or nickname already exists")
 
-@router.post("/login/", response_model=TokenResponse, tags=["Login and Registration"])
+@router.post("/login/", response_model=TokenResponse, tags=["Login and Registration"]) #TODO
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: AsyncSession = Depends(get_db)):
     if await UserService.is_account_locked(session, form_data.username):
         raise HTTPException(status_code=400, detail="Account locked due to too many failed login attempts.")
@@ -218,7 +218,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Async
         return {"access_token": access_token, "token_type": "bearer"}
     raise HTTPException(status_code=401, detail="Incorrect email or password.")
 
-@router.post("/login/", include_in_schema=False, response_model=TokenResponse, tags=["Login and Registration"])
+@router.post("/login/", include_in_schema=False, response_model=TokenResponse, tags=["Login and Registration"]) #TODO
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: AsyncSession = Depends(get_db)):
     if await UserService.is_account_locked(session, form_data.username):
         raise HTTPException(status_code=400, detail="Account locked due to too many failed login attempts.")
@@ -236,7 +236,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Async
     raise HTTPException(status_code=401, detail="Incorrect email or password.")
 
 
-@router.get("/verify-email/{user_id}/{token}", status_code=status.HTTP_200_OK, name="verify_email", tags=["Login and Registration"])
+@router.get("/verify-email/{user_id}/{token}", status_code=status.HTTP_200_OK, name="verify_email", tags=["Login and Registration"]) #TODO
 async def verify_email(user_id: UUID, token: str, db: AsyncSession = Depends(get_db), email_service: EmailService = Depends(get_email_service)):
     """
     Verify user's email with a provided token.

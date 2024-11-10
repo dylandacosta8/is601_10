@@ -8,13 +8,13 @@ from app.schemas.user_schemas import UserBase, UserCreate, UserUpdate, UserRespo
 def test_user_base_valid(user_base_data):
     user = UserBase(**user_base_data)
     assert user.nickname == user_base_data["nickname"]
-    assert user.email == user_base_data["email"]
+    assert user.email == user_base_data["email"] #TODO
 
 # Tests for UserCreate
 def test_user_create_valid(user_create_data):
     user = UserCreate(**user_create_data)
     assert user.nickname == user_create_data["nickname"]
-    assert user.password == user_create_data["password"]
+    assert user.password == user_create_data["password"] #TODO
 
 # Tests for UserUpdate
 def test_user_update_valid(user_update_data):
@@ -25,14 +25,14 @@ def test_user_update_valid(user_update_data):
 # Tests for UserResponse
 def test_user_response_valid(user_response_data):
     user = UserResponse(**user_response_data)
-    assert user.id == user_response_data["id"]
+    assert user.id == user_response_data["id"] #TODO
     # assert user.last_login_at == user_response_data["last_login_at"]
 
 # Tests for LoginRequest
 def test_login_request_valid(login_request_data):
     login = LoginRequest(**login_request_data)
-    assert login.email == login_request_data["email"]
-    assert login.password == login_request_data["password"]
+    assert login.email == login_request_data["email"] #TODO
+    assert login.password == login_request_data["password"] #TODO
 
 # Parametrized tests for nickname and email validation
 @pytest.mark.parametrize("nickname", ["test_user", "test-user", "testuser123", "123test"])
@@ -68,28 +68,22 @@ def test_user_base_url_invalid(url, user_base_data):
         UserBase(**user_base_data)
 
 # Tests for UserBase
-def test_user_base_invalid_email(user_base_data_invalid):
+def test_user_base_invalid_email(user_base_data_invalid): #TODO
     with pytest.raises(ValidationError) as exc_info:
         user = UserBase(**user_base_data_invalid)
     
     assert "value is not a valid email address" in str(exc_info.value)
     assert "john.doe.example.com" in str(exc_info.value)
 
-@pytest.mark.parametrize("password", [
-    "nouppercase1*", # No uppercase
-    "NOLOWERCASE1*", # No lowercase
-    "NoSpecialChar1" # No special character
-])
-def test_user_create_invalid_password(password, user_base_data):
+@pytest.mark.parametrize("password", [ "nouppercase1*", "NOLOWERCASE1*","NoSpecialChar1"])
+def test_user_create_invalid_password(password, user_base_data): #TODO
     user_base_data["password"] = password
     with pytest.raises(ValidationError) as exc_info:
         UserCreate(**user_base_data)
     assert "Password must" in str(exc_info.value)
 
-@pytest.mark.parametrize("password", [
-    "Short", # Too short
-])
-def test_user_create_invalid_password_short(password, user_base_data):
+@pytest.mark.parametrize("password", ["Short",])
+def test_user_create_invalid_password_short(password, user_base_data): #TODO
     user_base_data["password"] = password
     with pytest.raises(ValidationError) as exc_info:
         UserCreate(**user_base_data)
